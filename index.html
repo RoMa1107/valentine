@@ -124,11 +124,29 @@
       margin: 0 auto;
       display: block;
     }
+	
+	/* Stile per la frase "I love u" */
+    .love-message {
+      font-size: clamp(28px, 5vw, 38px);
+      color: #ff3b7a;
+      margin: 20px 0 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
 
     @keyframes pop {
       from { transform: scale(.96); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+	
+	@keyframes heartbeat {
+	  0% { transform: scale(1); }
+	  10% { transform: scale(1.15); }
+	  20% { transform: scale(1); }
+	  30% { transform: scale(1.15); }
+	  40% { transform: scale(1); }
+	  100% { transform: scale(1); }
+	}
   </style>
 </head>
 
@@ -160,7 +178,11 @@
         src="Rob&Ross.jpeg"
         alt="Fireworks"
       />
-    </section>
+	  
+	  <!-- Aggiunta della frase "I love u" -->
+      <div class="love-message">I love u 💖</div>
+    
+	</section>
   </main>
 
   <script>
