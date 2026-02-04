@@ -28,6 +28,7 @@
       font-family: 'Sacramento', cursive;
       overflow: hidden;
       padding: 16px;
+	  overflow-y: auto;
     }
 
     /* FULL-SCREEN CONFETTI CANVAS */
@@ -37,7 +38,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: 9999;
+      z-index: -1;
     }
 
     .card {
@@ -60,7 +61,7 @@
 
     h1 {
       font-size: clamp(26px, 4vw, 44px);
-	  
+	  color: #f80000;
       margin: 12px 0 18px;
     }
 
@@ -220,43 +221,49 @@
       yesScale = Math.min(2.2, yesScale + 0.1);
       yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
     }
-
-    /* ---------- NO BUTTON RUNS AWAY ---------- */
-    function clamp(n, min, max) {
-      return Math.max(min, Math.min(max, n));
+	
+	/* ---------- UTILITY FUNCTION ---------- */
+	function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
     }
 
-    function moveNo(px, py) {
-      const z = zone.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
+    /* ---------- NO BUTTON RUNS AWAY FROM CLICK POSITION ---------- */
+	function moveNoFromClick(clickX, clickY) {
+	  const z = zone.getBoundingClientRect();
+	  const b = noBtn.getBoundingClientRect();
 
-      let dx = (b.left + b.width / 2) - px;
-      let dy = (b.top + b.height / 2) - py;
-      let mag = Math.hypot(dx, dy) || 1;
-      dx /= mag;
-      dy /= mag;
+	  // Calcola la direzione opposta al click
+	  let dx = (b.left + b.width / 2) - clickX;
+	  let dy = (b.top + b.height / 2) - clickY;
+	  let mag = Math.hypot(dx, dy) || 1;
+	  dx /= mag;
+	  dy /= mag;
 
-      let newLeft = (b.left - z.left) + dx * 150;
-      let newTop  = (b.top - z.top) + dy * 150;
+	  // Muovi il pulsante nella direzione opposta
+	  let newLeft = (b.left - z.left) + dx * 100;
+	  let newTop  = (b.top - z.top) + dy * 100;
 
-      newLeft = clamp(newLeft, 0, z.width - b.width);
-      newTop  = clamp(newTop, 0, z.height - b.height);
+	  // Mantieni il pulsante dentro la zona
+	  newLeft = clamp(newLeft, 0, z.width - b.width);
+	  newTop  = clamp(newTop, 0, z.height - b.height);
 
-      noBtn.style.left = newLeft + "px";
-      noBtn.style.top = newTop + "px";
-      noBtn.style.transform = "none";
+	  noBtn.style.left = newLeft + "px";
+	  noBtn.style.top = newTop + "px";
+	  noBtn.style.transform = "none";
 
-      growYes();
-    }
+	  growYes();
+	}
 
-    zone.addEventListener("pointermove", e => {
-      const b = noBtn.getBoundingClientRect();
-      const d = Math.hypot(
-        (b.left + b.width / 2) - e.clientX,
-        (b.top + b.height / 2) - e.clientY
-      );
-      if (d < 140) moveNo(e.clientX, e.clientY);
-    });
+	noBtn.addEventListener("click", (e) => {
+	  e.preventDefault();
+	  moveNoFromClick(e.clientX, e.clientY);
+	});
+
+	noBtn.addEventListener("touchstart", (e) => {
+	  e.preventDefault();
+	  const touch = e.touches[0];
+	  moveNoFromClick(touch.clientX, touch.clientY);
+	});
 
     noBtn.addEventListener("click", e => e.preventDefault());
 
